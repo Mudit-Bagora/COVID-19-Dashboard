@@ -11,7 +11,7 @@ def merge(list1, list2):
 
 
 def indexPage(request):
-    data_india = pd.read_csv('E:/Projects/Short Project/COVID-19 Dashboard/secondDashboard/template/dataset/covid_19_india.csv')
+    data_india = pd.read_csv('template/dataset/covid_19_india.csv')
      #find total +ve cases
     df1 = data_india.groupby(["Date"]).sum()
     df1.head()
