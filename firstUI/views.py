@@ -31,7 +31,7 @@ def indexPage(request):
     # last updated data
     last_date = data_india["Date"].max()
     # total people tested
-    tests = pd.read_csv('E:/Projects/Short Project/COVID-19 Dashboard/secondDashboard/template/dataset/StatewiseTestingDetails.csv')
+    tests = pd.read_csv('template/dataset/StatewiseTestingDetails.csv')
     df2 = tests.groupby(["Date"]).sum().max()
     tested = df2['TotalSamples']
 
