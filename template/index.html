@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>COVID Dashboard</title>
+
+     <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/mapdata/countries/in/custom/in-all-disputed.js"></script>
+
+    <style>
+
+    body{
+        border: 0;
+        margin:0;
+        padding: 0px;
+      }
+        .top-header .navbar {
+        padding: 5px 0px;
+      }
+
+      .top-header {
+          background-position: center;
+          background-color: rgba(0,0,0,0.7);
+          color: #D3D3D3;
+          border: 0px;
+          width: 100%;
+      }
+
+      /* Map */
+      #container {
+          height: 1500px; 
+          min-width: 100%; 
+          max-width: 1500px; 
+          margin: 0 auto; 
+      }
+      .loading {
+          margin-top: 10em;
+          text-align: center;
+          color: gray;
+      }
+    </style>
+
+    </head>
+
+<body id="inner_page" data-spy="scroll" data-target="#navbar-wd" data-offset="98">
+
+     <!-- Start header -->
+		<header class="top-header">
+        <nav class="navbar header-nav navbar-expand-lg">
+            <div class="container-fluid">
+                <b><h3 style="text-align:center;">COVID-19 Dashboard</h3></b>
+            </div>
+        </nav>
+    </header>
+      <!-- End header -->
+    
+    <!-- Section -->
+    <div>
+      <div class="col-lg-3" > 
+
+        <div class="col-50" style="float: left; width: 50%; text-align:center;">
+
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text">Total Cases : {{totalCount}}</p>
+            </div>
+          </div>
+  
+          <div class="card">
+              <div class="card-body">
+              <p class="card-text">Cured : {{Cured}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-50"style="float: left; width: 50%; text-align:center;">
+
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text">{{Active}} : Active</p>
+            </div>
+          </div>
+  
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text">{{Death}} : Deaths</p>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+             
+        <canvas id="myChart"style="width: 350px; height=100%;"></canvas><br>
+      </div>
+
+      
+      <div class="col-50" style="float: left; width: 50%; text-align:center;"> Data as of : {{last_date}}</div>
+      <div class="col-50" style="float: left; width: 50%; text-align:center;"> Total tested : {{tested}}</div>
+      <br>
+      <hr style="border-top: 2px solid #D3D3D3;">
+
+
+      <div class="col-50" style="float: left; width: 50%;">
+        <div id="map" style="widows: 400px; height: 1000px;"></div>
+      </div>
+
+      <div class="col-50"style="float: left; width: 50%;">Text</div>
+    </div>
+  
+
+    <!-- End Section -->
+
+</body>
+<script>
+  /*bar graph*/
+  var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'horizontalBar',
+
+    // The data for our dataset
+    data: {
+        labels: {{statesplot|safe}} ,
+        datasets: [{
+            label: 'Confirmed Cases',
+            backgroundColor: 'rgba(0,0,255,0.3)',
+            data: {{values|safe}}
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+
+
+/*Map*/
+var data = {{datamap|safe}};
+
+// Create the chart
+Highcharts.mapChart('map', {
+    chart: {
+        map: 'countries/in/custom/in-all-disputed'
+    },
+
+    title: {
+        text: 'Covid Patients Heat Map'
+    },
+
+    subtitle: {
+        text: ''
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
+        }
+    },
+
+    colorAxis: {
+        min: 0
+    },
+
+    series: [{
+        data: data,
+        name: 'Total Positive',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            format: '{point.name}'
+        }
+    }]
+});
+
+</script>
+</html>
