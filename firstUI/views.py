@@ -41,6 +41,19 @@ def indexPage(request):
     datamap = merge(statesplot,values)
     showIndia = True
 
+    # daily confirmed patients
+    dataDatewise = data_india.groupby(["Date"]).sum()
+    dataDatewise = dataDatewise['Confirmed']
+    dataDatewise = dataDatewise.sort_values(ascending=True)
+    dataDatewise = dataDatewise.tolist()
+
+    # dates
+    data_india['State/UnionTerritory'] = [element.lower() for element in data_india['State/UnionTerritory']]
+    statename = 'kerala'
+    data = data_india[data_india['State/UnionTerritory'] == statename]
+    date = data['Date']
+    date = date.tolist()
+
     context={
         'totalCount': totalCount,
         'statesplot':statesplot,
@@ -51,7 +64,9 @@ def indexPage(request):
         'last_date':last_date,
         'tested':tested,
         'datamap':datamap,
-        'showIndia':showIndia
+        'showIndia':showIndia,
+        'date':date,
+        'dataDatewise':dataDatewise
         }
     return render(request,'index.html',context)
 
@@ -98,7 +113,31 @@ def viewStatedata(request):
     dateState = dataState['Date']
     dateState = dateState.tolist()
     confirmedState = dataState['Confirmed']
+    recoveredState = dataState['Cured']
+    deathState = dataState['Deaths']
+    activeState = dataState['Confirmed'] - dataState['Cured']
+    # total cases right now
+    totalState = confirmedState.tail(1)
+    totalState = totalState.values[0]
+
+    # total active right now
+    totalActiveState = activeState.tail(1)
+    totalActiveState = totalActiveState.values[0]
+
+    # total cured right now
+    totalCuredState = recoveredState.tail(1)
+    totalCuredState = totalCuredState.values[0]
+    
+    # total death right now
+    totaldeathState = deathState.tail(1)
+    totaldeathState = totaldeathState.values[0]
+    
+
     confirmedState = confirmedState.tolist()
+    activeState = activeState.tolist()
+    recoveredState = recoveredState.tolist()
+    deathState = deathState.tolist()
+    
 
     context={
         'totalCount': totalCount,
@@ -113,6 +152,13 @@ def viewStatedata(request):
         'statename':statename,
         'showIndia':showIndia,
         'confirmedState':confirmedState,
-        'dateState':dateState
+        'dateState':dateState,
+        'activeState':activeState,
+        'recoveredState':recoveredState,
+        'deathState':deathState,
+        'totalState':totalState,
+        'totalActiveState':totalActiveState,
+        'totalCuredState':totalCuredState,
+        'totaldeathState':totaldeathState
         }
     return render(request,'index.html',context)
