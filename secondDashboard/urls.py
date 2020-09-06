@@ -21,4 +21,5 @@ from firstUI import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('^$',views.indexPage,name = 'index'),
+    url('selectState',views.viewStatedata,name = 'index')
 ]

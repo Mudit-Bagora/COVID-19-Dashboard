@@ -25,10 +25,7 @@ SECRET_KEY = 'c08)l9bw-%lf3x=8p1(8r=nokv8*-g71l&uzj8-&oum(kh=kjr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'india-cov-19.herokuapp.com',
-    'localhost:8000',
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

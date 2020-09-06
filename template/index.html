@@ -105,9 +105,29 @@
 
       <div class="col-50" style="float: left; width: 50%;">
         <div id="map" style="widows: 400px; height: 1000px;"></div>
-      </div>
+      </div> 
 
-      <div class="col-50"style="float: left; width: 50%;">Text</div>
+      <div class="col-50"style="float: left; width: 50%;">
+      <form method="post" enctype="multipart/form-data" action="selectState" style="text-align: center;">
+        {% csrf_token %}
+        <select name="state">
+           {% for x in statesplot %}
+           {% if x == statename %}
+            <option value={{x}} selected>{{x}}</option>
+            {% else %}
+            <option value="{{x}}"">{{x}}</option>
+            {% endif %}
+           {% endfor %}
+        </select>
+        <p>Showing data for : {{statename|safe}} </p>
+        <input type="submit">
+      </form>
+      {% if showIndia == True %}
+        <p>India</p>
+        {% elif showIndia == False %}
+        <canvas id="myCharts"></canvas><br>
+      {% endif %}
+      </div>
     </div>
   
 
@@ -134,8 +154,31 @@ var chart = new Chart(ctx, {
     // Configuration options go here
     options: {}
 });
+</script>
 
+<script>
+/*line chart*/
+var ctx2 = document.getElementById('myCharts').getContext('2d');
+var chart2 = new Chart(ctx2, {
+    // The type of chart we want to create
+    type: 'line',
 
+    // The data for our dataset
+    data: {
+        labels: {{dateState|safe}},
+        datasets: [{
+            label: 'Total Positive',
+            backgroundColor: 'rgba(255,0,0,0.3)',
+            data: {{confirmedState|safe}}
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+</script>
+
+<script>
 /*Map*/
 var data = {{datamap|safe}};
 
@@ -169,7 +212,7 @@ Highcharts.mapChart('map', {
         name: 'Total Positive',
         states: {
             hover: {
-                color: '#BADA55'
+                color: '#FF6347'
             }
         },
         dataLabels: {
