@@ -52,7 +52,7 @@
 		<header class="top-header">
         <nav class="navbar header-nav navbar-expand-lg">
             <div class="container-fluid">
-                <b><h3 style="text-align:center;">COVID-19 Dashboard</h3></b>
+                <b><h2 style="text-align:center; color: white;">COVID-19 Dashboard</h2></b>
             </div>
         </nav>
     </header>
@@ -66,13 +66,13 @@
 
           <div class="card">
             <div class="card-body">
-              <p class="card-text">Total Cases : {{totalCount}}</p>
+              <p class="card-text" style="font-size:22px; color: rgba(255,0,0,0.6);"><b>Total Cases : </b>{{totalCount}}</p>
             </div>
           </div>
   
           <div class="card">
               <div class="card-body">
-              <p class="card-text">Cured : {{Cured}}</p>
+              <p class="card-text" style="font-size:22px; color: rgba(0,128,0,0.6);"><b>Cured : </b>{{Cured}}</p>
             </div>
           </div>
         </div>
@@ -80,25 +80,26 @@
 
           <div class="card">
             <div class="card-body">
-              <p class="card-text">{{Active}} : Active</p>
+              <p class="card-text" style="font-size:22px; color: rgba(51,130,255,0.6);">{{Active}} <b>: Active</b></p>
             </div>
           </div>
   
           <div class="card">
             <div class="card-body">
-              <p class="card-text">{{Death}} : Deaths</p>
+              <p class="card-text" style="font-size:22px; color: rgba(128,128,128,0.6);">{{Death}} <b>: Deaths</b></p>
             </div>
           </div>
         </div>
         </div>
       </div>
+      <hr style="border-top: 2px solid #D3D3D3;">
              
         <canvas id="myChart"style="width: 350px; height=100%;"></canvas><br>
       </div>
 
       
-      <div class="col-50" style="float: left; width: 50%; text-align:center;"> Data as of : {{last_date}}</div>
-      <div class="col-50" style="float: left; width: 50%; text-align:center;"> Total tested : {{tested}}</div>
+      <div class="col-50" style="float: left; width: 50%; text-align:center;"> <p style="font-size:18px;"><b>Last Update :</b> {{last_date}}</p></div>
+      <div class="col-50" style="float: left; width: 50%; text-align:center;"> <p style="font-size:18px;"><b>Total tested :</b> {{tested}}</p></div>
       <br>
       <hr style="border-top: 2px solid #D3D3D3;">
 
@@ -108,9 +109,10 @@
       </div> 
 
       <div class="col-50"style="float: left; width: 50%;">
+        <br>
       <form method="post" enctype="multipart/form-data" action="selectState" style="text-align: center;">
         {% csrf_token %}
-        <select name="state">
+        <select name="state" style="height:51px; border-right-width: 0px;">
            {% for x in statesplot %}
            {% if x == statename %}
             <option value={{x}} selected>{{x}}</option>
@@ -119,19 +121,66 @@
             {% endif %}
            {% endfor %}
         </select>
-        <p>Showing data for : {{statename|safe}} </p>
-        <input type="submit">
+        <input type="submit" style="background-color: #ffffff; height: 51px;">
       </form>
+      <br>
+      
       {% if showIndia == True %}
-        <p>India</p>
+      <div class="100per" style="width:100%; float:left; text-align: center;">
+        <p style="font-size: 18px;">Click On the Button above to View data of respective state </p><br>
+        <hr style="border-top: 2px solid #D3D3D3;">
+        <p>Day wise Increase in Confirmed cases in India</p>
+        <canvas id="indconfirm"></canvas><br>
+
+      </div>
+      <hr style="border-top: 2px solid #D3D3D3;">
         {% elif showIndia == False %}
-        <canvas id="myCharts"></canvas><br>
+        <hr style="border-top: 2px solid #D3D3D3;">
+
+        <p style="text-align: center; font-size: 18px;">Showing data for : <b>{{statename|safe}} </b></p>
+
+        <hr style="border-top: 2px solid #D3D3D3;">
+
+
+        <div class="100per" style="width:100%; float:left;">
+          <div class="50l" style="width:50%; float: left;">
+            <p>Total Cases : {{totalState}}</p>
+          </div>
+          <div class="50l" style="width:50%; float: left;">
+            <p>Active cases: {{totalActiveState}}</p>
+          </div>
+          <div class="50l" style="width:50%; float: left;">
+            <p>Cured Cases: {{totalCuredState}}</p>
+          </div>
+          <div class="50l" style="width:50%; float: left;">
+            <p>Death : {{totaldeathState}}</p>
+          </div>
+        </div>
+        <hr style="border-top: 2px solid #D3D3D3;">
+
+
+        <div class="100per" style="width:100%; float:left; text-align: center;">
+          <b style="font-size: 18px;">Visual Representation of day wise increase in cases: </b>
+        </div>
+        <br>
+        <div class="50per" style="width:50%; float:left;">
+        <canvas id="confirm"></canvas><br>
+        </div>
+        <div class="50per" style="width:50%; float:left;">
+        <canvas id="active"></canvas><br>
+        </div>
+        <div class="50per" style="width:50%; float:left;">
+          <canvas id="recovered"></canvas><br>
+        </div>
+        <div class="50per" style="width:50%; float:left;">
+          <canvas id="death"></canvas><br>
+        </div>
+        
       {% endif %}
       </div>
     </div>
-  
-
     <!-- End Section -->
+
 
 </body>
 <script>
@@ -157,8 +206,31 @@ var chart = new Chart(ctx, {
 </script>
 
 <script>
-/*line chart*/
-var ctx2 = document.getElementById('myCharts').getContext('2d');
+  /*line chart confirm cases(country)*/
+  var ctx1 = document.getElementById('indconfirm').getContext('2d');
+  var chart1 = new Chart(ctx1, {
+      // The type of chart we want to create
+      type: 'line',
+  
+      // The data for our dataset
+      data: {
+          labels: {{date|safe}},
+          datasets: [{
+              label: 'Total Positive',
+              backgroundColor: 'rgba(255,0,0,0.3)',
+              data: {{dataDatewise|safe}}
+          }]
+      },
+  
+      // Configuration options go here
+      options: {}
+  });
+  </script>
+  
+
+<script>
+/*line chart confirm cases(state)*/
+var ctx2 = document.getElementById('confirm').getContext('2d');
 var chart2 = new Chart(ctx2, {
     // The type of chart we want to create
     type: 'line',
@@ -177,6 +249,74 @@ var chart2 = new Chart(ctx2, {
     options: {}
 });
 </script>
+
+<script>
+/*line chart active cases*/
+var ctx3 = document.getElementById('active').getContext('2d');
+var chart3 = new Chart(ctx3, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: {{dateState|safe}},
+        datasets: [{
+            label: 'Active Cases',
+            backgroundColor: 'rgba(255,255,0,0.3)',
+            data: {{activeState|safe}}
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+</script>
+
+
+<script>
+  /*line chart recovered cases*/
+  var ctx4 = document.getElementById('recovered').getContext('2d');
+  var chart4 = new Chart(ctx4, {
+      // The type of chart we want to create
+      type: 'line',
+  
+      // The data for our dataset
+      data: {
+          labels: {{dateState|safe}},
+          datasets: [{
+              label: 'Recovered Cases',
+              backgroundColor: 'rgba(0,128,0,0.3)',
+              data: {{recoveredState|safe}}
+          }]
+      },
+  
+      // Configuration options go here
+      options: {}
+  });
+  </script>
+  
+  <script>
+  /*line chart death cases*/
+  var ctx5 = document.getElementById('death').getContext('2d');
+  var chart5 = new Chart(ctx5, {
+      // The type of chart we want to create
+      type: 'line',
+  
+      // The data for our dataset
+      data: {
+          labels: {{dateState|safe}},
+          datasets: [{
+              label: 'Death Cases',
+              backgroundColor: 'rgba(128,128,128,0.3)',
+              data: {{deathState|safe}}
+          }]
+      },
+  
+      // Configuration options go here
+      options: {}
+  });
+  </script>
+
 
 <script>
 /*Map*/
