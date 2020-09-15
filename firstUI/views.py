@@ -29,8 +29,6 @@ def indexPage(request):
     statesplot = plot.index.tolist()
     values = plot.values.tolist()
 
-    # last updated data
-    last_date = data_india["Date"].max()
     # total people tested
     tests = pd.read_csv('template/dataset/StatewiseTestingDetails.csv')
     df2 = tests.groupby(["Date"]).sum().max()
@@ -53,6 +51,8 @@ def indexPage(request):
     data = data_india[data_india['State/UnionTerritory'] == statename]
     date = data['Date']
     date = date.tolist()
+    # last updated data
+    last_date = date[-1]
 
     context={
         'totalCount': totalCount,
