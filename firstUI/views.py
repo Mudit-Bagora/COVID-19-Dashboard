@@ -93,8 +93,6 @@ def viewStatedata(request):
     statesplot = plot.index.tolist()
     values = plot.values.tolist()
 
-    # last updated data
-    last_date = data_india["Date"].max()
     # total people tested
     tests = pd.read_csv('template/dataset/StatewiseTestingDetails.csv')
     df2 = tests.groupby(["Date"]).sum().max()
@@ -119,6 +117,9 @@ def viewStatedata(request):
     # total cases right now
     totalState = confirmedState.tail(1)
     totalState = totalState.values[0]
+
+    # last updated data
+    last_date = dateState[-1]
 
     # total active right now
     totalActiveState = activeState.tail(1)
